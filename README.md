@@ -1,96 +1,90 @@
 # Demand Forecasting with Prophet
 
-Прогноз недельных продаж глобального Superstore на основе исторических
-заказов за 2011–2014 годы.
+Weekly sales forecasting for the Global Superstore dataset based on historical orders from 2011 to 2014.
 
-В проекте построены две модели:
+The project includes two models:
 
-- прогноз недельного объёма продаж в денежном выражении — `sales`;
-- оценка прогноза количества проданных единиц — `quantity`.
+* weekly sales value forecasting using `sales`;
+* evaluation of sold-unit quantity forecasting using `quantity`.
 
-## Цель проекта
+## Project Objective
 
-Построить модель Prophet, которая прогнозирует недельные продажи
-на четыре недели вперёд, оценить качество прогноза на исторических
-данных и сравнить результат с простым сезонным базовым прогнозом.
+Build a Prophet model that forecasts weekly sales four weeks ahead, evaluate its performance on historical data, and compare the results with a simple seasonal baseline forecast.
 
-Дополнительная задача — проверить, насколько точно модель может
-прогнозировать количество проданных единиц товара.
+An additional objective is to evaluate how accurately the model can forecast the number of units sold.
 
-## Данные
+## Data
 
-В проекте используется датасет Global Superstore:
+The project uses the Global Superstore dataset:
 
-- 51 290 заказов;
-- период: 2011–2014 годы;
-- глобальные продажи;
-- первая дата: 1 января 2011 года;
-- последняя дата: 31 декабря 2014 года;
-- пропущенных значений в `sales`, `quantity` и `order_date` после очистки: 0;
-- удалено строк после очистки: 0.
+* 51,290 orders;
+* period: 2011–2014;
+* global sales data;
+* first date: January 1, 2011;
+* last date: December 31, 2014;
+* missing values in `sales`, `quantity`, and `order_date` after cleaning: 0;
+* rows removed during cleaning: 0.
 
-Основные используемые колонки:
+Main columns used:
 
-| Колонка | Описание |
-|---|---|
-| `order_date` | дата заказа |
-| `sales` | сумма продаж |
-| `quantity` | количество проданных единиц |
+| Column       | Description          |
+| ------------ | -------------------- |
+| `order_date` | order date           |
+| `sales`      | sales amount         |
+| `quantity`   | number of units sold |
 
-## Инструменты
+## Tools
 
-- Python
-- pandas
-- NumPy
-- Prophet
-- scikit-learn
-- matplotlib
-- openpyxl
-- Google Colab
+* Python
+* pandas
+* NumPy
+* Prophet
+* scikit-learn
+* matplotlib
+* openpyxl
+* Google Colab
 
-## Подготовка данных
+## Data Preparation
 
-В ходе подготовки данных были выполнены следующие операции:
+The following data preparation steps were performed:
 
-1. Удаление BOM и лишних символов из названий колонок.
-2. Преобразование `sales` в числовой формат.
-3. Преобразование `quantity` в числовой формат.
-4. Преобразование `order_date` в формат даты.
-5. Проверка пропущенных значений.
-6. Сортировка данных по дате.
-7. Исключение неполных недель в начале и конце датасета.
-8. Агрегация отдельных заказов в недельные суммы.
+1. Removed BOM characters and extra symbols from column names.
+2. Converted `sales` to numeric format.
+3. Converted `quantity` to numeric format.
+4. Converted `order_date` to datetime format.
+5. Checked for missing values.
+6. Sorted the dataset by date.
+7. Excluded incomplete weeks at the beginning and end of the dataset.
+8. Aggregated individual orders into weekly totals.
 
-После агрегации получен временной ряд:
+After aggregation, the resulting time series contains:
 
-- количество недель: **208**;
-- начало ряда: **9 января 2011 года**;
-- конец ряда: **28 декабря 2014 года**;
-- частота: одна неделя;
-- пропущенные недели отсутствуют.
+* number of weeks: **208**;
+* start date: **January 9, 2011**;
+* end date: **December 28, 2014**;
+* frequency: weekly;
+* missing weeks: none.
 
-Для Prophet данные преобразованы в стандартный формат:
+The data was converted to the standard Prophet format:
 
-| Колонка | Значение |
-|---|---|
-| `ds` | дата окончания недели |
-| `y` | недельная сумма продаж или количества товаров |
+| Column | Meaning                        |
+| ------ | ------------------------------ |
+| `ds`   | week-ending date               |
+| `y`    | weekly sales or quantity total |
 
-## Разделение train/test
+## Train/Test Split
 
-Временной ряд разделён хронологически:
+The time series was split chronologically:
 
-- train: первые **204 недели**;
-- test: последние **4 недели**;
-- тестовый период: с 7 по 28 декабря 2014 года.
+* train: first **204 weeks**;
+* test: last **4 weeks**;
+* test period: December 7–28, 2014.
 
-Случайное разделение не использовалось, поскольку при работе
-с временными рядами необходимо сохранять последовательность дат.
+Random splitting was not used because time-series data must preserve chronological order.
 
-## Модель
+## Model
 
-Для прогнозирования использовалась библиотека Prophet со следующими
-основными параметрами:
+The Prophet model was configured with the following parameters:
 
 ```python
 Prophet(
@@ -102,180 +96,162 @@ Prophet(
 )
 ```
 
-Недельная и дневная сезонность отключены, поскольку исходные данные
-уже агрегированы по неделям.
+Weekly and daily seasonality were disabled because the source data had already been aggregated to weekly frequency.
 
-## Результаты прогноза продаж
+## Sales Forecast Results
 
-Модель была проверена на последних четырёх неделях исторических данных.
+The model was evaluated on the last four weeks of historical data.
 
-### Метрики Prophet
+### Prophet Metrics
 
-| Метрика | Результат |
-|---|---:|
-| MAPE | **8,13%** |
-| RMSE | **11 896,96** |
-| MAE | **8 521,27** |
-| Условная точность `100% − MAPE` | **91,87%** |
+| Metric                            |        Result |
+| --------------------------------- | ------------: |
+| MAPE                              |     **8.13%** |
+| RMSE                              | **11,896.96** |
+| MAE                               |  **8,521.27** |
+| Simplified accuracy `100% − MAPE` |    **91.87%** |
 
-MAPE 8,13% означает, что недельный прогноз на тестовом периоде
-в среднем отклонялся от фактических продаж примерно на 8,13%.
+A MAPE of 8.13% means that the weekly forecast deviated from actual sales by approximately 8.13% on average during the test period.
 
-Показатель `100% − MAPE` используется только как упрощённая
-бизнес-интерпретация и не является отдельной стандартной метрикой
-машинного обучения.
+The `100% − MAPE` value is used only as a simplified business interpretation and is not a separate standard machine-learning metric.
 
-## Сравнение с базовым прогнозом
+## Baseline Comparison
 
-В качестве baseline использован сезонный наивный прогноз:
+A seasonal naive forecast was used as the baseline:
 
-> продажи текущей недели принимаются равными продажам аналогичной
-> недели предыдущего года.
+> Sales for the current week are assumed to be equal to sales from the corresponding week of the previous year.
 
-Для недельного временного ряда использован сдвиг на 52 недели.
+A 52-week lag was used for the weekly time series.
 
-| Метрика | Prophet | Seasonal baseline |
-|---|---:|---:|
-| MAPE | **8,13%** | **22,15%** |
-| RMSE | **11 896,96** | **26 213,43** |
+| Metric |       Prophet | Seasonal Baseline |
+| ------ | ------------: | ----------------: |
+| MAPE   |     **8.13%** |        **22.15%** |
+| RMSE   | **11,896.96** |     **26,213.43** |
 
-Prophet снизил RMSE относительно сезонного базового прогноза
-примерно на **54,6%**.
+Prophet reduced RMSE by approximately **54.6%** compared with the seasonal baseline.
 
-Таким образом, на выбранном тестовом периоде Prophet показал
-существенно лучший результат, чем простое сезонное правило.
+Therefore, on the selected test period, Prophet performed significantly better than the simple seasonal forecasting rule.
 
-## Cross-validation
+## Cross-Validation
 
-Для дополнительной проверки модели проведена временная
-cross-validation:
+Time-series cross-validation was used for additional model evaluation:
 
-- первоначальный обучающий период: 730 дней;
-- шаг между точками проверки: 90 дней;
-- горизонт каждого прогноза: 28 дней;
-- количество прогнозных окон: 8.
+* initial training period: 730 days;
+* interval between forecast cutoffs: 90 days;
+* forecast horizon: 28 days;
+* number of forecast windows: 8.
 
-Результаты cross-validation:
+Cross-validation results:
 
-| Метрика | Результат |
-|---|---:|
-| CV MAPE | **15,16%** |
-| CV RMSE | **15 887,16** |
-| CV MAE | **12 582,32** |
+| Metric  |        Result |
+| ------- | ------------: |
+| CV MAPE |    **15.16%** |
+| CV RMSE | **15,887.16** |
+| CV MAE  | **12,582.32** |
 
-Метрики cross-validation хуже результата последних четырёх недель.
-Это показывает, что качество прогноза меняется между историческими
-периодами, поэтому результат holdout-теста не следует воспринимать
-как гарантированную точность для любого периода.
+The cross-validation metrics are worse than the results from the final four-week holdout period.
 
-## Финальный прогноз продаж
+This indicates that forecast performance varies across historical periods, so the holdout result should not be interpreted as guaranteed accuracy for every future period.
 
-После оценки качества модель была переобучена на всех 208 неделях
-исторических данных.
+## Final Sales Forecast
 
-Сформирован прогноз на первые четыре недели 2015 года:
+After evaluation, the model was retrained on all 208 weeks of historical data.
 
-| Неделя | Прогноз продаж | Нижняя граница | Верхняя граница |
-|---|---:|---:|---:|
-| 04.01.2015 | 102 140,97 | 89 164,36 | 114 189,00 |
-| 11.01.2015 | 85 990,72 | 72 166,92 | 98 552,43 |
-| 18.01.2015 | 76 061,72 | 63 037,13 | 88 976,66 |
-| 25.01.2015 | 75 603,51 | 61 976,55 | 88 379,01 |
+A forecast was generated for the first four weeks of 2015:
 
-Суммарный прогноз продаж за четыре недели:
+| Week       | Sales Forecast | Lower Bound | Upper Bound |
+| ---------- | -------------: | ----------: | ----------: |
+| 2015-01-04 |     102,140.97 |   89,164.36 |  114,189.00 |
+| 2015-01-11 |      85,990.72 |   72,166.92 |   98,552.43 |
+| 2015-01-18 |      76,061.72 |   63,037.13 |   88,976.66 |
+| 2015-01-25 |      75,603.51 |   61,976.55 |   88,379.01 |
 
-- ожидаемый объём продаж: **339 796,92**;
-- нижняя граница диапазона: **286 344,96**;
-- верхняя граница диапазона: **390 097,09**.
+Total sales forecast for the four-week period:
 
-Это историческая демонстрация прогнозирования, поскольку исходный
-датасет заканчивается в декабре 2014 года.
+* expected sales: **339,796.92**;
+* lower forecast bound: **286,344.96**;
+* upper forecast bound: **390,097.09**.
 
-## Прогноз количества проданных единиц
+This is a historical forecasting demonstration because the source dataset ends in December 2014.
 
-Дополнительно была построена отдельная модель на основе колонки
-`quantity`.
+## Quantity Forecast
 
-Модель проверялась на тех же последних четырёх неделях.
+A separate model was also built using the `quantity` column.
 
-### Метрики прогноза quantity
+The model was evaluated on the same final four-week period.
 
-| Метрика | Результат |
-|---|---:|
-| MAPE | **8,00%** |
-| RMSE | **137,43 единицы** |
-| MAE | **127,87 единицы** |
-| Условная точность | **92,00%** |
+### Quantity Forecast Metrics
 
-Результаты по тестовым неделям:
+| Metric              |           Result |
+| ------------------- | ---------------: |
+| MAPE                |        **8.00%** |
+| RMSE                | **137.43 units** |
+| MAE                 | **127.87 units** |
+| Simplified accuracy |       **92.00%** |
 
-| Неделя | Факт | Прогноз | Ошибка, % |
-|---|---:|---:|---:|
-| 07.12.2014 | 1 758 | 1 627,31 | 7,43% |
-| 14.12.2014 | 1 715 | 1 645,68 | 4,04% |
-| 21.12.2014 | 1 450 | 1 656,55 | 14,24% |
-| 28.12.2014 | 1 675 | 1 570,09 | 6,26% |
+Results for the test weeks:
 
-В текущей версии проекта для `quantity` выполнена оценка модели
-на тестовом периоде. Отдельный будущий прогноз количества товаров
-на январь 2015 года не строился.
+| Week       | Actual | Forecast | Error, % |
+| ---------- | -----: | -------: | -------: |
+| 2014-12-07 |  1,758 | 1,627.31 |    7.43% |
+| 2014-12-14 |  1,715 | 1,645.68 |    4.04% |
+| 2014-12-21 |  1,450 | 1,656.55 |   14.24% |
+| 2014-12-28 |  1,675 | 1,570.09 |    6.26% |
 
-## Бизнес-вывод
+In the current version of the project, the `quantity` model is evaluated only on the historical test period.
 
-Модель Prophet прогнозирует общий недельный объём продаж на четыре
-недели вперёд с MAPE 8,13% на последнем тестовом периоде.
+A separate future quantity forecast for January 2015 was not generated.
 
-Прогноз может использоваться как дополнительный ориентир для:
+## Business Conclusion
 
-- планирования общего объёма закупок;
-- подготовки логистических ресурсов;
-- распределения бюджета;
-- оценки ожидаемой нагрузки;
-- выявления периодов повышенного спроса.
+The Prophet model forecasts total weekly sales four weeks ahead with a MAPE of 8.13% on the final holdout period.
 
-Модель по `quantity` лучше соответствует задаче планирования запасов,
-поскольку прогнозирует количество проданных единиц, а не только
-денежный объём продаж.
+The forecast can be used as an additional input for:
 
-Однако для непосредственного снижения риска stockout прогноз следует
-строить отдельно по товарам, категориям или подкатегориям и дополнять
-информацией о:
+* procurement planning;
+* logistics resource planning;
+* budget allocation;
+* workload estimation;
+* identifying periods of increased demand.
 
-- текущих складских остатках;
-- сроках поставки;
-- страховом запасе;
-- минимальном размере заказа;
-- доступности поставщиков.
+The `quantity` model is more relevant to inventory planning because it forecasts the number of units sold rather than only the monetary value of sales.
 
-## Ограничения проекта
+However, to directly reduce stockout risk, forecasts should be built separately by product, category, or subcategory and combined with information about:
 
-- тестовая выборка содержит только четыре недели;
-- данные заканчиваются в 2014 году;
-- основной прогноз построен по общим продажам всего бизнеса;
-- cross-validation показывает более высокую ошибку, чем holdout-тест;
-- модель не учитывает акции, праздники и маркетинговые кампании;
-- модель не учитывает складские остатки и сроки поставки;
-- прогноз `quantity` не разделён по отдельным товарам;
-- интервал Prophet отражает неопределённость модели, но не гарантирует
-  попадание фактических значений в указанный диапазон.
+* current inventory levels;
+* supplier lead times;
+* safety stock;
+* minimum order quantities;
+* supplier availability.
 
-## Экспорт результатов
+## Project Limitations
 
-Ноутбук сохраняет результаты в двух форматах:
+* the test set contains only four weeks;
+* the dataset ends in 2014;
+* the main forecast is based on total company-wide sales;
+* cross-validation shows a higher error than the holdout test;
+* the model does not include promotions, holidays, or marketing campaigns;
+* the model does not include inventory levels or supplier lead times;
+* the `quantity` forecast is not separated by individual products;
+* the Prophet interval represents model uncertainty but does not guarantee that actual values will fall within the predicted range.
 
-- `.csv` — для GitHub и дальнейшей обработки в Python;
-- `.xlsx` — для удобного просмотра в Microsoft Excel.
+## Exported Results
 
-Excel-файлы содержат:
+The notebook exports results in two formats:
 
-- отдельные столбцы;
-- жирные заголовки;
-- фильтры;
-- закреплённую первую строку;
-- настроенную ширину колонок;
-- форматирование дат и чисел.
+* `.csv` — for GitHub and further processing in Python;
+* `.xlsx` — for convenient viewing in Microsoft Excel.
 
-## Структура репозитория
+The Excel files include:
+
+* separate columns;
+* bold headers;
+* filters;
+* frozen header rows;
+* adjusted column widths;
+* formatted dates and numeric values.
+
+## Repository Structure
 
 ```text
 demand-forecasting-prophet/
@@ -295,47 +271,47 @@ demand-forecasting-prophet/
     └── quantity_forecast_vs_actual.xlsx
 ```
 
-## Файлы проекта
+## Project Files
 
-- `demand_forecasting_prophet.ipynb` — полный анализ и модели;
-- `weekly_sales.csv` — недельный временной ряд продаж;
-- `forecast_vs_actual.csv` — сравнение прогноза продаж с фактом;
-- `next_4_weeks_forecast.csv` — прогноз продаж на четыре недели;
-- `quantity_forecast_vs_actual.csv` — сравнение прогноза количества
-  товаров с фактом;
-- файлы `.xlsx` — оформленные версии таблиц для Microsoft Excel.
+* `demand_forecasting_prophet.ipynb` — complete analysis and models;
+* `weekly_sales.csv` — weekly sales time series;
+* `forecast_vs_actual.csv` — comparison of forecasted and actual sales;
+* `next_4_weeks_forecast.csv` — four-week sales forecast;
+* `quantity_forecast_vs_actual.csv` — comparison of forecasted and actual unit quantities;
+* `.xlsx` files — formatted versions of the result tables for Microsoft Excel.
 
-## Запуск проекта
+## Running the Project
 
-Установить необходимые библиотеки:
+Install the required libraries:
 
 ```bash
 pip install pandas numpy prophet scikit-learn matplotlib openpyxl
 ```
 
-Открыть ноутбук:
+Open the notebook:
 
 ```text
 demand_forecasting_prophet.ipynb
 ```
 
-Загрузить исходный файл:
+Upload the source file:
 
 ```text
 SuperStoreOrders.csv
 ```
 
-После загрузки выполнить все ячейки сверху вниз.
+Then run all notebook cells from top to bottom.
 
-## Возможные улучшения
+## Possible Improvements
 
-Следующие этапы развития проекта:
+Future project improvements may include:
 
-1. Прогноз продаж отдельно по категориям.
-2. Прогноз количества по подкатегориям и товарам.
-3. Добавление праздничных и сезонных событий в Prophet.
-4. Подбор параметров модели.
-5. Сравнение Prophet с ARIMA, SARIMA, XGBoost и LightGBM.
-6. Использование rolling backtesting с несколькими горизонтами.
-7. Добавление данных о складских остатках.
-8. Расчёт точки заказа и страхового запаса.
+1. Forecasting sales separately by category.
+2. Forecasting quantities by subcategory and product.
+3. Adding holidays and seasonal events to Prophet.
+4. Tuning model parameters.
+5. Comparing Prophet with ARIMA, SARIMA, XGBoost, and LightGBM.
+6. Using rolling backtesting with multiple forecast horizons.
+7. Adding inventory-level data.
+8. Calculating reorder points and safety stock.
+
