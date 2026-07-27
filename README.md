@@ -44,6 +44,12 @@ Main columns used:
 * openpyxl
 * Google Colab
 
+## Data Source
+
+Download the public Global Superstore dataset from:
+
+(https://www.kaggle.com/datasets/laibaanwer/superstore-sales-dataset)
+
 ## Data Preparation
 
 The following data preparation steps were performed:
