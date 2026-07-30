@@ -48,7 +48,10 @@ Main columns used:
 
 Download the public Global Superstore dataset from:
 
-(https://www.kaggle.com/datasets/laibaanwer/superstore-sales-dataset)
+[Global Superstore dataset on Kaggle](https://www.kaggle.com/datasets/laibaanwer/superstore-sales-dataset)
+All data used in this project is public demonstration data.
+No employer, customer, or confidential business information
+is included.
 
 ## Data Preparation
 
